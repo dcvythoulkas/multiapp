@@ -1,0 +1,16 @@
+http:
+  routers:
+    jellyfin:
+      entryPoints:
+        - websecure-ext
+        - websecure-int
+      rule: "Host(`stream.samian.terminus.gr`)"
+      tls:
+        certResolver: mainresolver
+      service: jellyfin-service
+
+  services:
+    jellyfin-service:
+      loadbalancer:
+        servers:
+          - url: "http://10.254.0.11:8096"

@@ -1,0 +1,67 @@
+include:
+  - ./gandi-livedns/gandi-livedns-compose.yml
+    #  - ./vaultwarden/vaultwarden-compose.yml
+  - ./jellyfin/jellyfin-compose.yml
+  - ./nextcloud/nextcloud-compose.yml
+
+networks:
+  webproxy-backend:
+    ipam:
+      config:
+        - subnet: 10.254.0.0/16
+
+services:
+
+  webproxy:
+    image: traefik:v3.6.4
+    container_name: webproxy
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/install/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./traefik/install/acme.json:/etc/traefik/acme.json
+      - ./traefik/routing:/etc/traefik/routing:ro
+      - ./traefik/logs:/var/log/traefik
+    ports:
+      - "80:80"
+      - "81:81"
+      - "443:443"
+      - "444:444"
+      - "8088:8080"
+    networks:
+      webproxy-backend:
+        ipv4_address: "10.254.254.254"
+    environment:
+      - GANDIV5_PERSONAL_ACCESS_TOKEN=${GANDIV5_PERSONAL_ACCESS_TOKEN}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.traefik_https.rule=Host(`main.samian.terminus.gr`)
+      - traefik.http.routers.traefik_https.entrypoints=websecure-int
+      - traefik.http.routers.traefik_https.tls=true
+      - traefik.http.routers.traefik_https.tls.certresolver=mainresolver
+      - traefik.http.routers.traefik.tls.domains[0].main=samian.terminus.gr
+      - traefik.http.routers.traefik.tls.domains[0].sans=*samian.terminus.gr
+      - traefik.http.routers.traefik_https.service=api@internal
+
+        #  portainer:
+        #    image: portainer/portainer-ce:2.33.5
+        #    container_name: portainer
+        #    networks:
+        #      webproxy-backend:
+        #        ipv4_address: "10.254.254.253"
+        #    command: -H unix:///var/run/docker.sock
+        #    restart: always
+        #    volumes:
+        #      - /var/run/docker.sock:/var/run/docker.sock
+        #      - ./portainer:/data
+        #    labels:
+        #      - traefik.enable=true
+        #      - traefik.http.services.portainer.loadbalancer.server.port=9000
+        #      - traefik.http.routers.portainer.rule=Host(`port.samian.terminus.gr`)
+        #      - traefik.http.routers.portainer.entrypoints=websecure-int
+        #      - traefik.http.routers.portainer.tls=true
+        #      - traefik.http.routers.portainer.tls.certresolver=mainresolver
+        #      - traefik.http.routers.portainer.tls.domains[0].main=samian.terminus.gr
+        #      - traefik.http.routers.portainer.tls.domains[0].sans=*samian.terminus.gr

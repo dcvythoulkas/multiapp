@@ -1,0 +1,52 @@
+volumes:
+  nc_app:
+  nc_pgdb:
+
+services:
+  nc_pgdb:
+    image: postgres:18.3-trixie
+    container_name: nc_pgdb
+    restart: always
+    networks:
+      webproxy-backend:
+        ipv4_address: "10.254.0.12"
+    shm_size: 128mb
+    volumes:
+      - ./nc_pgdb:/var/lib/postgresql
+    environment:
+      POSTGRES_USER: ${nc_pgdb_user}
+      POSTGRES_PASSWORD: ${nc_pgdb_password}
+      POSTGRES_DB: ${nc_pgdb_db}
+
+
+  nc_app:
+    image: nextcloud:31.0.14-apache
+    container_name: nc_app
+    restart: always
+    networks:
+      webproxy-backend:
+        ipv4_address: "10.254.0.13"
+          #ports:
+          #  - 8880:80
+    links:
+      - nc_pgdb
+    volumes:
+      - ./nc_app:/var/www/html
+    environment:
+      #      APACHE_DISABLE_REWRITE_IP: 1
+      TRUSTED_PROXIES: "10.254.254.254"
+      POSTGRES_HOST: ${nc_pgdb_host}
+      POSTGRES_DB: ${nc_pgdb_db}
+      POSTGRES_USER: ${nc_pgdb_user}
+      POSTGRES_PASSWORD: ${nc_pgdb_password}
+      NEXTCLOUD_TRUSTED_DOMAINS: ${nc_trusted_domains}
+      NEXTCLOUD_ADMIN_USER: ${nc_admin_user}
+      NEXTCLOUD_ADMIN_PASSWORD: ${nc_admin_password}
+      SMTP_HOST: ${smtp_host}
+      SMTP_SECURE: ${smtp_encryption}
+      SMTP_PORT: ${smtp_port}
+      SMTP_AUTHTYPE: ${smtp_authtype}
+      SMTP_NAME: ${smtp_username}
+      SMTP_PASSWORD: ${smtp_password}
+      MAIL_FROM_ADDRESS: ${smtp_from_address}
+      MAIL_DOMAIN: ${smtp_from_domain}

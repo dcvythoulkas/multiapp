@@ -1,0 +1,14 @@
+---
+services:
+  dynamic-dns:
+    image: jbbodart/gandi-livedns
+    container_name: gandi-dns
+    network_mode: host #optional
+    environment:
+      - GANDI_PAT=${GANDIV5_PERSONAL_ACCESS_TOKEN}
+        #      - GANDI_PAT=d443305a8d6826f6550c00d3e58ee7d74f84ef35
+      - RECORD_LIST=currentip.chalcis
+      - DOMAIN=terminus.gr
+    volumes:
+      - ./config:/config #optional
+    restart: unless-stopped

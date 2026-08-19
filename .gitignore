@@ -1,0 +1,11 @@
+.env
+traefik/install/acme.json
+traefik/logs
+nextcloud/nc_app
+nextcloud/nc_pgdb
+portainer
+vaultwarden
+gandi_livedns/config
+jellyfin/cache
+jellyfin/config
+jellyfin/media

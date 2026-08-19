@@ -1,0 +1,15 @@
+#http:
+#  routers:
+#    vaultwarden:
+#      entryPoints:
+#        - websecure-int
+#      rule: "Host(`vw.z396.terminus.gr`)"
+#      tls:
+#        certResolver: mainresolver
+#      service: vaultwarden-service
+#
+#  services:
+#    vaultwarden-service:
+#      loadbalancer:
+#        servers:
+#          - url: "http://10.254.0.10"

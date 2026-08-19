@@ -1,0 +1,22 @@
+http:
+  routers:
+    nextcloud:
+      entryPoints:
+        - websecure-ext
+        - websecure-int
+      rule: "Host(`cloud.samian.terminus.gr`)"
+      tls:
+        certResolver: mainresolver
+      service: nextcloud-service
+
+  services:
+    nextcloud-service:
+      loadbalancer:
+        servers:
+          - url: "http://10.254.0.13:80"
+            #
+            #  middlewares:
+            #    nextcloud-headers:
+            #      headers:
+            #        STSPreload: true
+            #        STSSeconds: 15552000
