@@ -8,6 +8,4 @@ services:
       - GANDI_PAT=${GANDIV5_PERSONAL_ACCESS_TOKEN}
       - RECORD_LIST=${RECORD_LIST}
       - DOMAIN=${DOMAIN}
-    volumes:
-      - ./config:/config #optional
     restart: unless-stopped
