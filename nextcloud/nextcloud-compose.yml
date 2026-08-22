@@ -3,21 +3,20 @@ volumes:
   nc_pgdb:
 
 services:
-  nc_pgdb:
-    image: postgres:18.3-trixie
-    container_name: nc_pgdb
+  nc_mardb:
+    image: mariadb:11.4.12
     restart: always
+    command: --transaction-isolation=READ-COMMITTED --log-bin=binlog --binlog-format=ROW
     networks:
       webproxy-backend:
         ipv4_address: "10.254.0.12"
-    shm_size: 128mb
     volumes:
-      - ./nc_pgdb:/var/lib/postgresql
+      - ./nc_mardb:/var/lib/mysql
     environment:
-      POSTGRES_USER: ${nc_pgdb_user}
-      POSTGRES_PASSWORD: ${nc_pgdb_password}
-      POSTGRES_DB: ${nc_pgdb_db}
-
+      MYSQL_ROOT_PASSWORD: ${nc_mardb_root_password}
+      MYSQL_USER: ${nc_mardb_user_name}
+      MYSQL_PASSWORD: ${nc_mardb_user_pass}
+      MYSQL_DATABASE: ${nc_mardb_db}
 
   nc_app:
     image: nextcloud:31.0.14-apache
@@ -26,19 +25,17 @@ services:
     networks:
       webproxy-backend:
         ipv4_address: "10.254.0.13"
-          #ports:
-          #  - 8880:80
     links:
-      - nc_pgdb
+      - nc_mardb
     volumes:
       - ./nc_app:/var/www/html
     environment:
       #      APACHE_DISABLE_REWRITE_IP: 1
       TRUSTED_PROXIES: "10.254.254.254"
-      POSTGRES_HOST: ${nc_pgdb_host}
-      POSTGRES_DB: ${nc_pgdb_db}
-      POSTGRES_USER: ${nc_pgdb_user}
-      POSTGRES_PASSWORD: ${nc_pgdb_password}
+      MYSQL_HOST: ${nc_mardb_host}
+      MYSQL_DATABASE: ${nc_mardb_db}
+      MYSQL_USER: ${nc_mardb_user_name}
+      MYSQL_PASSWORD: ${nc_mardb_user_pass}
       NEXTCLOUD_TRUSTED_DOMAINS: ${nc_trusted_domains}
       NEXTCLOUD_ADMIN_USER: ${nc_admin_user}
       NEXTCLOUD_ADMIN_PASSWORD: ${nc_admin_password}

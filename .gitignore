@@ -1,9 +1,8 @@
 .env
 traefik/logs
 nextcloud/nc_app
-nextcloud/nc_pgdb
+nextcloud/nc_mardb
 portainer
 vaultwarden
-gandi_livedns/config
 jellyfin/cache/*
 jellyfin/config/*
