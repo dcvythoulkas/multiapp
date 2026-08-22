@@ -32,6 +32,7 @@ services:
     environment:
       #      APACHE_DISABLE_REWRITE_IP: 1
       TRUSTED_PROXIES: "10.254.254.254"
+      OVERWRITEPROTOCOL: "https"
       MYSQL_HOST: ${nc_mardb_host}
       MYSQL_DATABASE: ${nc_mardb_db}
       MYSQL_USER: ${nc_mardb_user_name}
