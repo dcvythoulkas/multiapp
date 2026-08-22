@@ -1,0 +1,15 @@
+http:
+  routers:
+    qbittorrent:
+      entryPoints:
+        - websecure-int
+      rule: "Host(`torrent.samian.terminus.gr`)"
+      tls:
+        certResolver: mainresolver
+      service: qbittorrent-service
+
+  services:
+    qbittorrent-service:
+      loadbalancer:
+        servers:
+          - url: "http://10.254.0.14:8080"

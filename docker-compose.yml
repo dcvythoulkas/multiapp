@@ -1,8 +1,9 @@
 include:
   - ./gandi-livedns/gandi-livedns-compose.yml
     #  - ./vaultwarden/vaultwarden-compose.yml
-  - ./jellyfin/jellyfin-compose.yml
   - ./nextcloud/nextcloud-compose.yml
+  - ./jellyfin/jellyfin-compose.yml
+  - ./qbittorrent/qbittorrent-compose.yml
 
 networks:
   webproxy-backend:
