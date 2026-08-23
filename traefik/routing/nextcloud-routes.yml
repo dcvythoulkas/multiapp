@@ -8,6 +8,7 @@ http:
       tls:
         certResolver: mainresolver
       service: nextcloud-service
+      middleware: nextcloud_redirectregex
 
   services:
     nextcloud-service:
@@ -20,3 +21,9 @@ http:
             #      headers:
             #        STSPreload: true
             #        STSSeconds: 15552000
+
+  middlewares:
+    nextcloud_redirectregex:
+      permanent: true
+      regex: "https://(.*)/.well-known/(?:card|cal)dav"
+      replacement: "https://$${1}/remote.php/dav"
