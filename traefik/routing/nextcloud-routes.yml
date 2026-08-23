@@ -8,7 +8,7 @@ http:
       tls:
         certResolver: mainresolver
       service: nextcloud-service
-      middleware: nextcloud_redirectregex
+      middlewares: nextcloud_redirectregex
 
   services:
     nextcloud-service:
