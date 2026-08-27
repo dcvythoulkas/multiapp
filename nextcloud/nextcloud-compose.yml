@@ -18,6 +18,21 @@ services:
       MYSQL_PASSWORD: ${nc_mardb_user_pass}
       MYSQL_DATABASE: ${nc_mardb_db}
 
+#    nc_pgdb:
+#    image: postgres:18.3-trixie
+#    container_name: nc_pgdb
+#    restart: always
+#    networks:
+#      webproxy-backend:
+#        ipv4_address: "10.254.0.12"
+#    shm_size: 128mb
+#    volumes:
+#      - ./nc_pgdb:/var/lib/postgresql
+#    environment:
+#      POSTGRES_USER: ${nc_pgdb_user}
+#      POSTGRES_PASSWORD: ${nc_pgdb_password}
+#      POSTGRES_DB: ${nc_pgdb_db}
+
   nc_app:
     image: nextcloud:31.0.14-apache
     container_name: nc_app
