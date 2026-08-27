@@ -1,8 +1,8 @@
 .env
+inventory/*
 traefik/logs
 nextcloud/nc_app
 nextcloud/nc_mardb
-portainer
 vaultwarden
 jellyfin/cache/*
 jellyfin/config/*
