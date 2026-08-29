@@ -1,0 +1,7 @@
+---
+- name: Configure outpost
+  hosts: outpost
+  remote_user: root
+
+  roles:
+    - docker_engine_install

@@ -1,0 +1,8 @@
+---
+- name: Configure cloud-hc2
+  hosts: cloud-hc2
+  remote_user: root
+
+  roles:
+    - docker_engine_install
+    - gandi_ddns

@@ -1,0 +1,27 @@
+---
+- name: Template necessary files
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+  loop:
+    - src: gandi-ddns.conf.j2
+      dest: "{{ gandi_conf }}"
+      mode: 0644
+    - src: gandi-ddns.sh.j2
+      dest: "{{ gandi_script }}"
+      mode: 0700
+  tags:
+    - gandi
+    - script
+
+- name: Set cron job for gandi updates
+  ansible.builtin.cron:
+    name: gandi_update
+    minute: "*/5"
+    user: root
+    job: "{{ gandi_script }}"
+    cron_file: gandi_update
+  tags:
+    - gandi
+    - cron
