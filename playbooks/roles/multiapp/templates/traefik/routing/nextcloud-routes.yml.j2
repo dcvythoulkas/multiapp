@@ -4,9 +4,9 @@ http:
       entryPoints:
         - websecure-ext
         - websecure-int
-      rule: "Host(`cloud.samian.terminus.gr`)"
+      rule: "Host(`{{ docker.applications.nextcloud.gandi_host ~ '.' ~ gandi_domain }}`)"
       tls:
-        certResolver: mainresolver
+        certResolver: {{ acme_certs }}
       service: nextcloud-service
       middlewares: nextcloud_redirectregex
 

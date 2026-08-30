@@ -2,7 +2,7 @@
 #
 # gandi-ddns.sh
 #
-# Dynamic DNS updater for Gandi LiveDNS
+# Dynamic DNS updater for multiple Gandi LiveDNS A records.
 #
 
 set -euo pipefail
@@ -12,8 +12,15 @@ set -euo pipefail
 #############################
 
 DOMAIN="{{ gandi_domain }}"
-HOST="{{ gandi_host }}"              # Use "@" for the root domain
 TTL=300
+
+# Hostnames to update.
+# Use "@" for the root/apex domain.
+HOSTS=(
+    "home"
+    "vpn"
+    "nas"
+)
 
 TOKEN_FILE="{{ gandi_conf }}"
 LOGFILE="/var/log/gandi-ddns.log"
@@ -21,13 +28,16 @@ LOGFILE="/var/log/gandi-ddns.log"
 #############################
 
 [[ -f "$TOKEN_FILE" ]] || {
-    echo "Missing $TOKEN_FILE"
+    echo "Missing $TOKEN_FILE" >&2
     exit 1
 }
 
 source "$TOKEN_FILE"
 
-API="https://api.gandi.net/v5/livedns/domains/${DOMAIN}/records/${HOST}/A"
+[[ -n "${GANDI_PAT:-}" ]] || {
+    echo "GANDI_PAT is not set" >&2
+    exit 1
+}
 
 log() {
     echo "$(date '+%F %T') $*" >> "$LOGFILE"
@@ -44,51 +54,77 @@ curl_retry() {
         "$@"
 }
 
-#
-# Get current WAN IP
-#
-PUBLIC_IP=$(curl_retry https://api.ipify.org)
+#############################
+# Get public IPv4 once
+#############################
+
+PUBLIC_IP="$(curl_retry -4 https://api.ipify.org)"
 
 if ! [[ "$PUBLIC_IP" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
-    log "ERROR Invalid IP: $PUBLIC_IP"
+    log "ERROR: Invalid public IP: $PUBLIC_IP"
     exit 1
 fi
 
-#
-# Read current DNS record
-#
-DNS_IP=$(
-curl_retry \
-    -H "Authorization: Bearer ${GANDI_PAT}" \
-    "$API" |
-jq -r '.rrset_values[0]'
-)
+log "Current public IP: $PUBLIC_IP"
 
-#
-# Nothing changed?
-#
-if [[ "$PUBLIC_IP" == "$DNS_IP" ]]; then
-    exit 0
-fi
+#############################
+# Update each host
+#############################
 
-log "IP changed ${DNS_IP} -> ${PUBLIC_IP}"
+for HOST in "${HOSTS[@]}"; do
 
-#
-# Update record
-#
-JSON=$(jq -n \
-    --arg ip "$PUBLIC_IP" \
-    --argjson ttl "$TTL" \
-'{
-    rrset_values: [$ip],
-    rrset_ttl: $ttl
-}')
+    API="https://api.gandi.net/v5/livedns/domains/${DOMAIN}/records/${HOST}/A"
 
-curl_retry \
-    -X PUT \
-    -H "Authorization: Bearer ${GANDI_PAT}" \
-    -H "Content-Type: application/json" \
-    --data "$JSON" \
-    "$API" >/dev/null
+    #
+    # Read current DNS record
+    #
+    DNS_IP="$(
+        curl_retry \
+            -H "Authorization: Bearer ${GANDI_PAT}" \
+            -H "Accept: application/json" \
+            "$API" |
+        jq -r '.rrset_values[0] // empty'
+    )"
 
-log "Gandi record updated successfully"
+    #
+    # Already correct?
+    #
+    if [[ "$PUBLIC_IP" == "$DNS_IP" ]]; then
+        log "${HOST}.${DOMAIN}: already ${PUBLIC_IP}"
+        continue
+    fi
+
+    log "${HOST}.${DOMAIN}: updating ${DNS_IP:-<not set>} -> ${PUBLIC_IP}"
+
+    #
+    # Build request
+    #
+    JSON="$(
+        jq -n \
+            --arg ip "$PUBLIC_IP" \
+            --argjson ttl "$TTL" \
+            '{
+                rrset_values: [$ip],
+                rrset_ttl: $ttl
+            }'
+    )"
+
+    #
+    # Update Gandi
+    #
+    if curl_retry \
+        -X PUT \
+        -H "Authorization: Bearer ${GANDI_PAT}" \
+        -H "Content-Type: application/json" \
+        -H "Accept: application/json" \
+        --data "$JSON" \
+        "$API" >/dev/null
+    then
+        log "${HOST}.${DOMAIN}: update successful"
+    else
+        log "${HOST}.${DOMAIN}: ERROR update failed"
+    fi
+
+done
+
+exit 0

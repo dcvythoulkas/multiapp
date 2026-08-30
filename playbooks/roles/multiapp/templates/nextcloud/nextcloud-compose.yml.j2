@@ -1,37 +1,39 @@
 volumes:
   nc_app:
-  nc_pgdb:
+  nc_db:
 
 services:
+{% if docker.applications.nextcloud.database == 'postgresql' }}
+    nc_pgdb:
+    image: postgres:{{ docker.applications.nextcloud.database_version }}
+    container_name: nc_pgdb
+    restart: always
+    networks:
+      webproxy-backend:
+        ipv4_address: "10.254.0.12"
+    shm_size: 128mb
+    volumes:
+      - ./nc_db:/var/lib/postgresql
+    environment:
+      POSTGRES_USER: ${nc_pgdb_user}
+      POSTGRES_PASSWORD: ${nc_pgdb_password}
+      POSTGRES_DB: ${nc_pgdb_db}
+{% else %}
   nc_mardb:
-    image: mariadb:11.4.12
+    image: mariadb:{{ docker.applications.nextcloud.database_version }}
     restart: always
     command: --transaction-isolation=READ-COMMITTED --log-bin=binlog --binlog-format=ROW
     networks:
       webproxy-backend:
         ipv4_address: "10.254.0.12"
     volumes:
-      - ./nc_mardb:/var/lib/mysql
+      - ./nc_db:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${nc_mardb_root_password}
       MYSQL_USER: ${nc_mardb_user_name}
       MYSQL_PASSWORD: ${nc_mardb_user_pass}
       MYSQL_DATABASE: ${nc_mardb_db}
-
-#    nc_pgdb:
-#    image: postgres:18.3-trixie
-#    container_name: nc_pgdb
-#    restart: always
-#    networks:
-#      webproxy-backend:
-#        ipv4_address: "10.254.0.12"
-#    shm_size: 128mb
-#    volumes:
-#      - ./nc_pgdb:/var/lib/postgresql
-#    environment:
-#      POSTGRES_USER: ${nc_pgdb_user}
-#      POSTGRES_PASSWORD: ${nc_pgdb_password}
-#      POSTGRES_DB: ${nc_pgdb_db}
+{% endif %}
 
   nc_app:
     image: nextcloud:31.0.14-apache
@@ -41,7 +43,11 @@ services:
       webproxy-backend:
         ipv4_address: "10.254.0.13"
     links:
+{% if docker.applications.nextcloud.database == 'postgresql' }}
+      - nc_pgdb
+{% else %}
       - nc_mardb
+{% endif %}
     volumes:
       - ./nc_app:/var/www/html
     environment:

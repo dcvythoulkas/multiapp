@@ -1,9 +1,8 @@
 include:
-  - ./gandi-livedns/gandi-livedns-compose.yml
-    #  - ./vaultwarden/vaultwarden-compose.yml
-  - ./nextcloud/nextcloud-compose.yml
-  - ./jellyfin/jellyfin-compose.yml
-  - ./qbittorrent/qbittorrent-compose.yml
+{% if docker.applications.vaultwarden %}  - ./vaultwarden/vaultwarden-compose.yml{% endif %}
+{% if docker.applications.nextcloud %}  - ./nextcloud/nextcloud-compose.yml{% endif %}
+{% if docker.applications.jellyfin %}  - ./jellyfin/jellyfin-compose.yml{% endif %}
+{% if docker.applications.qbittorrent %}  - ./qbittorrent/qbittorrent-compose.yml{% endif %}
 
 networks:
   webproxy-backend:
@@ -14,8 +13,7 @@ networks:
 services:
 
   webproxy:
-    # image: traefik:v3.6.4
-    image: traefik:v3.7.11
+    image: traefik:v{{ docker.applications.traefik.version }}
     container_name: webproxy
     security_opt:
       - no-new-privileges:true
@@ -39,12 +37,12 @@ services:
       - GANDIV5_PERSONAL_ACCESS_TOKEN=${GANDIV5_PERSONAL_ACCESS_TOKEN}
     labels:
       - traefik.enable=true
-      - traefik.http.routers.traefik_https.rule=Host(`main.samian.terminus.gr`)
+      - traefik.http.routers.traefik_https.rule=Host(`{{ docker.applications.traefik.gandi_host }}.{{ gandi_domain }}`)
       - traefik.http.routers.traefik_https.entrypoints=websecure-int
       - traefik.http.routers.traefik_https.tls=true
-      - traefik.http.routers.traefik_https.tls.certresolver=mainresolver
-      - traefik.http.routers.traefik.tls.domains[0].main=samian.terminus.gr
-      - traefik.http.routers.traefik.tls.domains[0].sans=*samian.terminus.gr
+      - traefik.http.routers.traefik_https.tls.certresolver={{ docker.applications.traefik.acme_certs }}
+      - traefik.http.routers.traefik.tls.domains[0].main={{ gandi_subdomain.replace(".","") }}.{{ gandi_domain }}
+      - traefik.http.routers.traefik.tls.domains[0].sans=*{{ gandi_subdomain.replace(".","") }}.{{ gandi_domain }}
       - traefik.http.routers.traefik_https.service=api@internal
 
         #  portainer:

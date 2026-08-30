@@ -39,10 +39,20 @@ entrypoints:
     address: ":8088"
 
 certificatesResolvers:
-  mainresolver:
+  prod-resolver:
     acme:
-      email: dcvythoulkas@gmail.com
-      # caServer: https://acme-v02.api.letsencrypt.org/directory # production (default)
+      email: {{ email_address }}
+      caServer: https://acme-v02.api.letsencrypt.org/directory # production (default)
+      storage: /etc/traefik/acme.json
+      dnsChallenge:
+        provider: gandiv5
+        resolvers:
+          - "217.70.187.105:53"
+          - "213.167.230.135:53"
+          - "173.246.100.153:53"
+  stage-resolver:
+    acme:
+      email: {{ email_address }}
       caServer: https://acme-staging-v02.api.letsencrypt.org/directory # staging (testing)
       storage: /etc/traefik/acme.json
       dnsChallenge:

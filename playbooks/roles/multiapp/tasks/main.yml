@@ -1,0 +1,61 @@
+---
+- name: Create user to run docker containers
+  ansible.builtin.user:
+    name: "{{ docker.user }}"
+    uid: 1000
+    shell: /bin/bash
+    create_home: yes
+    groups: docker
+    append: yes
+  tags:
+    - multiapp
+    - compose
+    - user
+
+- name: Create main directory tree for the compose (traefik volumes)
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    recurse: true
+    mode: '0755'
+    owner: "{{ docker.user }}"
+    group: "{{ docker.user }}"
+  loop:
+    - "{{ docker.root_path }}/traefik/install"
+    - "{{ docker.root_path }}/traefik/routing"
+    - "{{ docker.root_path }}/traefik/logs"
+  tags:
+    - multiapp
+    - volumes
+    - folder
+
+- name: Make sure acme.json has correct permissions from the beginning
+  ansible.builtin.file:
+    path: "{{ docker.root_path }}/traefik/install/acme.json"
+    state: touch
+    mode: '0600'
+    owner: "{{ docker.user }}"
+    group: "{{ docker.user }}"
+  tags:
+    - multiapp
+    - volumes
+
+- name: Template main compose file
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ docker.root_path }}/docker-compose.yml"
+    mode: '0644'
+    owner: "{{ docker.user }}"
+    group: "{{ docker.user }}"
+
+- name: Template traefik install configuration (change requires restart)
+  ansible.builtin.template:
+    src: "traefik/traefik.yml.j2"
+    dest: "{{ docker.root_path }}/traefik/install/traefik.yml"
+    mode: '0644'
+    owner: "{{ docker.user }}"
+    group: "{{ docker.user }}"
+
+- name: Add Nectcloud
+  import_tasks: nextcloud.yml
+  when: docker.applications.nextcloud is defined
