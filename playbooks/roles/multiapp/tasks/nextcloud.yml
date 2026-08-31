@@ -3,12 +3,13 @@
 - name: Create directory for Nextcloud data and conf
   ansible.builtin.file:
     path: "{{ docker.root_path }}/nextcloud"
+    state: directory
     mode: '0755'
     owner: "{{ docker.user }}"
     group: "{{ docker.user }}"
 
 - name: Template Nextcloud compose file
-  ansible.builtin.file:
+  ansible.builtin.template:
     src: "nextcloud/nextcloud-compose.yml.j2"
     dest: "{{ docker.root_path }}/nextcloud/nextcloud-compose.yml"
     mode: '0644'
@@ -16,7 +17,7 @@
     group: "{{ docker.user }}"
 
 - name: Template traefik's routing configuration for Nextcloud container
-  ansible.builtin.file:
+  ansible.builtin.template:
     src: "traefik/routing/nextcloud-routes.yml.j2"
     dest: "{{ docker.root_path }}/traefik/routing/nextcloud-routes.yml"
     mode: '0644'

@@ -17,9 +17,9 @@ TTL=300
 # Hostnames to update.
 # Use "@" for the root/apex domain.
 HOSTS=(
-    "home"
-    "vpn"
-    "nas"
+{% for host in gandi_hosts %}
+    "{{ host }}{{ gandi_subdomain }}"
+{% endfor %}
 )
 
 TOKEN_FILE="{{ gandi_conf }}"

@@ -1,8 +1,8 @@
 include:
-{% if docker.applications.vaultwarden %}  - ./vaultwarden/vaultwarden-compose.yml{% endif %}
-{% if docker.applications.nextcloud %}  - ./nextcloud/nextcloud-compose.yml{% endif %}
-{% if docker.applications.jellyfin %}  - ./jellyfin/jellyfin-compose.yml{% endif %}
-{% if docker.applications.qbittorrent %}  - ./qbittorrent/qbittorrent-compose.yml{% endif %}
+{% if docker.applications.vaultwarden is defined %}  - ./vaultwarden/vaultwarden-compose.yml{% endif %}
+{% if docker.applications.nextcloud is defined %}  - ./nextcloud/nextcloud-compose.yml{% endif %}
+{% if docker.applications.jellyfin is defined %}  - ./jellyfin/jellyfin-compose.yml{% endif %}
+{% if docker.applications.qbittorrent is defined %}  - ./qbittorrent/qbittorrent-compose.yml{% endif %}
 
 networks:
   webproxy-backend:

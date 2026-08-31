@@ -1,0 +1,41 @@
+# Environmental variables for all apps
+
+## Traefik vars ##
+# gandi token
+GANDIV5_PERSONAL_ACCESS_TOKEN: {{ gandi_pat }}
+
+#######################################################################
+#######################################################################
+
+## Nextcloud vars ##
+{% if docker.applications.nextcloud.database == 'postgresql' %}
+# Database vars - PostgreSQL
+nc_pgdb_host: nc_pgdb
+nc_pgdb_db: {{ docker.applications.nextcloud.env.nc_pgdb_db }}
+nc_pgdb_user: {{ docker.applications.nextcloud.env.nc_pgdb_user }}
+nc_pgdb_password: {{ docker.applications.nextcloud.env.nc_pgdb_password }}
+{% else %}
+# Database vars - MariaDB
+nc_mardb_host: nc_mardb
+nc_mardb_root_password: {{ docker.applications.nextcloud.env.nc_mardb_root_password }}
+nc_mardb_db: {{ docker.applications.nextcloud.env.nc_mardb_db }}
+nc_mardb_user_name: {{ docker.applications.nextcloud.env.nc_mardb_user_name }}
+nc_mardb_user_pass: {{ docker.applications.nextcloud.env.nc_mardb_user_pass }}
+{% endif %}
+# Application vars
+nc_trusted_domains: "{{ docker.applications.nextcloud.env.nc_trusted_domains }}"
+nc_admin_user: {{ docker.applications.nextcloud.env.nc_admin_user }}
+nc_admin_password: "{{ docker.applications.nextcloud.env.nc_admin_password }}"
+
+# SMTP vars - GOOGLE
+smtp_host: "smtp.gmail.com"
+smtp_encryption: tls
+smtp_port: 587
+smtp_authtype: login
+smtp_username: "{{ docker.applications.nextcloud.env.smtp_username }}"
+smtp_password: "{{ docker.applications.nextcloud.env.smtp_password }}"
+smtp_from_address: "{{ docker.applications.nextcloud.env.smtp_from_address }}"
+smtp_from_domain: "gmail.com"
+
+#######################################################################
+#######################################################################

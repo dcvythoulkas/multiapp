@@ -3,8 +3,8 @@ volumes:
   nc_db:
 
 services:
-{% if docker.applications.nextcloud.database == 'postgresql' }}
-    nc_pgdb:
+{% if docker.applications.nextcloud.database == 'postgresql' %}
+  nc_pgdb:
     image: postgres:{{ docker.applications.nextcloud.database_version }}
     container_name: nc_pgdb
     restart: always
@@ -43,7 +43,7 @@ services:
       webproxy-backend:
         ipv4_address: "10.254.0.13"
     links:
-{% if docker.applications.nextcloud.database == 'postgresql' }}
+{% if docker.applications.nextcloud.database == 'postgresql' %}
       - nc_pgdb
 {% else %}
       - nc_mardb
@@ -54,10 +54,16 @@ services:
       #      APACHE_DISABLE_REWRITE_IP: 1
       TRUSTED_PROXIES: "10.254.254.254"
       OVERWRITEPROTOCOL: "https"
+{% if docker.applications.nextcloud.database == 'postgresql' %}
+      POSTGRES_USER: ${nc_pgdb_user}
+      POSTGRES_PASSWORD: ${nc_pgdb_password}
+      POSTGRES_DB: ${nc_pgdb_db}
+{% else %}
       MYSQL_HOST: ${nc_mardb_host}
       MYSQL_DATABASE: ${nc_mardb_db}
       MYSQL_USER: ${nc_mardb_user_name}
       MYSQL_PASSWORD: ${nc_mardb_user_pass}
+{% endif %}
       NEXTCLOUD_TRUSTED_DOMAINS: ${nc_trusted_domains}
       NEXTCLOUD_ADMIN_USER: ${nc_admin_user}
       NEXTCLOUD_ADMIN_PASSWORD: ${nc_admin_password}

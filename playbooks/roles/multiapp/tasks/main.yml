@@ -29,6 +29,15 @@
     - volumes
     - folder
 
+- name: Template the .env file for docker variables
+  ansible.builtin.template:
+    src: dot_env.j2
+    dest: "{{ docker.root_path }}/.env"
+    mode: '0644'
+    owner: "{{ docker.user }}"
+    group: "{{ docker.user }}"
+
+
 - name: Make sure acme.json has correct permissions from the beginning
   ansible.builtin.file:
     path: "{{ docker.root_path }}/traefik/install/acme.json"
@@ -50,7 +59,7 @@
 
 - name: Template traefik install configuration (change requires restart)
   ansible.builtin.template:
-    src: "traefik/traefik.yml.j2"
+    src: "traefik/install/traefik.yml.j2"
     dest: "{{ docker.root_path }}/traefik/install/traefik.yml"
     mode: '0644'
     owner: "{{ docker.user }}"
