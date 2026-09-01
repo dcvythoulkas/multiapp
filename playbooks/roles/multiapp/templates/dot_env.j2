@@ -13,14 +13,14 @@ GANDIV5_PERSONAL_ACCESS_TOKEN: {{ gandi_pat }}
 nc_pgdb_host: nc_pgdb
 nc_pgdb_db: {{ docker.applications.nextcloud.env.nc_pgdb_db }}
 nc_pgdb_user: {{ docker.applications.nextcloud.env.nc_pgdb_user }}
-nc_pgdb_password: {{ docker.applications.nextcloud.env.nc_pgdb_password }}
+nc_pgdb_password: "{{ docker.applications.nextcloud.env.nc_pgdb_password }}"
 {% else %}
 # Database vars - MariaDB
 nc_mardb_host: nc_mardb
-nc_mardb_root_password: {{ docker.applications.nextcloud.env.nc_mardb_root_password }}
+nc_mardb_root_password: "{{ docker.applications.nextcloud.env.nc_mardb_root_password }}"
 nc_mardb_db: {{ docker.applications.nextcloud.env.nc_mardb_db }}
 nc_mardb_user_name: {{ docker.applications.nextcloud.env.nc_mardb_user_name }}
-nc_mardb_user_pass: {{ docker.applications.nextcloud.env.nc_mardb_user_pass }}
+nc_mardb_user_pass: "{{ docker.applications.nextcloud.env.nc_mardb_user_pass }}"
 {% endif %}
 # Application vars
 nc_trusted_domains: "{{ docker.applications.nextcloud.env.nc_trusted_domains }}"

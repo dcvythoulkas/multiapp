@@ -55,6 +55,7 @@ services:
       TRUSTED_PROXIES: "10.254.254.254"
       OVERWRITEPROTOCOL: "https"
 {% if docker.applications.nextcloud.database == 'postgresql' %}
+      POSTGRES_HOST: ${nc_pgdb_host}
       POSTGRES_USER: ${nc_pgdb_user}
       POSTGRES_PASSWORD: ${nc_pgdb_password}
       POSTGRES_DB: ${nc_pgdb_db}
