@@ -36,7 +36,7 @@ services:
 {% endif %}
 
   nc_app:
-    image: nextcloud:31.0.14-apache
+    image: nextcloud:{{ docker.applications.nextcloud.version }}
     container_name: nc_app
     restart: always
     networks:

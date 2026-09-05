@@ -1,0 +1,15 @@
+http:
+  routers:
+    pihole:
+      entryPoints:
+        - websecure-int
+      rule: "Host(`{{ docker.applications.pihole.gandi_host ~ '.' ~ gandi_domain }}`)"
+      tls:
+        certResolver: {{ docker.applications.pihole.acme_certs }}
+      service: pihole-service
+
+  services:
+    pihole-service:
+      loadbalancer:
+        servers:
+          - url: "https://10.254.0.15"

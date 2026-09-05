@@ -1,0 +1,9 @@
+---
+
+- name: Template traefik's routing configuration for qbittorent application
+  ansible.builtin.template:
+    src: "traefik/routing/qbittorrent-routes.yml.j2"
+    dest: "{{ docker.root_path }}/traefik/routing/qbittorrent-routes.yml"
+    mode: '0644'
+    owner: "{{ docker.user }}"
+    group: "{{ docker.user }}"

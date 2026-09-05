@@ -65,6 +65,18 @@
     owner: "{{ docker.user }}"
     group: "{{ docker.user }}"
 
-- name: Add Nectcloud
+- name: Add Nextcloud
   import_tasks: nextcloud.yml
   when: docker.applications.nextcloud is defined
+
+- name: Add jellyfin
+  import_tasks: jellyfin.yml
+  when: docker.applications.jellyfin is defined
+
+- name: Add qbittorrent
+  import_tasks: qbittorrent.yml
+  when: docker.applications.qbittorrent is defined
+
+- name: Add pihole
+  import_tasks: pihole.yml
+  when: docker.applications.pihole is defined

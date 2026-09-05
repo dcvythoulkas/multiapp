@@ -1,0 +1,19 @@
+http:
+  routers:
+    qbittorrent:
+      entryPoints:
+        - websecure-int
+      rule: "Host(`{{ docker.applications.qbittorrent.gandi_host ~ '.' ~ gandi_domain }}`)"
+      tls:
+        certResolver: {{ docker.applications.qbittorrent.acme_certs }}
+      service: qbittorrent-service
+
+  services:
+    qbittorrent-service:
+      loadbalancer:
+        servers:
+{% if docker.applications.qbittorrent.backend_url is defined %}
+          - url: "{{ docker.applications.qbittorrent.backend_url }}"
+{% else %}
+          - url: "http://10.254.0.14:8080"
+{% endif %}

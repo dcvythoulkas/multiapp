@@ -1,0 +1,9 @@
+---
+
+- name: Template traefik's routing configuration for jellyfin container
+  ansible.builtin.template:
+    src: "traefik/routing/jellyfin-routes.yml.j2"
+    dest: "{{ docker.root_path }}/traefik/routing/jellyfin-routes.yml"
+    mode: '0644'
+    owner: "{{ docker.user }}"
+    group: "{{ docker.user }}"

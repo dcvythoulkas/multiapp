@@ -1,0 +1,25 @@
+---
+
+- name: Create directory for pihole data and conf
+  ansible.builtin.file:
+    path: "{{ docker.root_path }}/pihole"
+    state: directory
+    mode: '0755'
+    owner: "{{ docker.user }}"
+    group: "{{ docker.user }}"
+
+- name: Template pihole compose file
+  ansible.builtin.template:
+    src: "pihole/pihole-compose.yml.j2"
+    dest: "{{ docker.root_path }}/pihole/pihole-compose.yml"
+    mode: '0644'
+    owner: "{{ docker.user }}"
+    group: "{{ docker.user }}"
+
+- name: Template traefik's routing configuration for pihole container
+  ansible.builtin.template:
+    src: "traefik/routing/pihole-routes.yml.j2"
+    dest: "{{ docker.root_path }}/traefik/routing/pihole-routes.yml"
+    mode: '0644'
+    owner: "{{ docker.user }}"
+    group: "{{ docker.user }}"

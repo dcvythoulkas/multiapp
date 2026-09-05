@@ -3,6 +3,9 @@ global:
   sendAnonymousUsage: false
 
 providers:
+  http:
+    tls:
+      insecureSkipVerify: true
   docker:
     endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
