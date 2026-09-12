@@ -39,3 +39,15 @@
   tags:
       - packages
       - docker-engine
+
+- name: Create user to run docker containers
+  ansible.builtin.user:
+    name: "{{ docker.user }}"
+    uid: 1000
+    shell: /bin/bash
+    create_home: yes
+    groups: docker
+    append: yes
+  tags:
+    - docker-engine
+    - config

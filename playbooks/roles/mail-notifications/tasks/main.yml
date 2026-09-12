@@ -1,0 +1,72 @@
+---
+
+- name: Preconfigure postfix questions
+  ansible.builtin.debconf:
+    name: postfix
+    question: "{{ item.question }}"
+    value: "{{ item.value }}"
+    vtype: "{{ item.vtype}}"
+  loop:
+    - question: "postfix/mailname"
+      value: "{{ ansible_facts['hostname'] }}"
+      vtype: string
+    - question: "postfix/main_mailer_type"
+      value: "Internet Site"
+      vtype: select
+  tags:
+    - mail-notifications
+    - packages
+
+- name: Install postfix
+  ansible.builtin.apt:
+    pkg:
+      - postfix
+      - libsasl2-modules
+    state: latest
+    update_cache: true
+    cache_valid_time: 3600
+  tags:
+    - mail-notifications
+    - packages
+
+- name: Template comfiguration files
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+  loop:
+    - src: main.cf.j2
+      dest: "/etc/postfix/main.cf"
+      mode: 0644
+    - src: sasl_passwd.j2
+      dest: "/etc/postfix/sasl/sasl_passwd"
+      mode: 0600
+  register: configuration_files
+  notify:
+    - Restart postfix
+  tags:
+    - config
+    - mail-notifications
+
+- name: Run postmap if configuration changed
+  ansible.builtin.command: /usr/sbin/postmap {{ item }}
+  loop:
+    - "/etc/postfix/sasl/sasl_passwd"
+  when: configuration_files.changed
+  tags:
+    - config
+    - mail-notifications
+
+- name: Fix permisions on password files
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    mode: "{{ item.mode }}"
+  loop:
+    - path: "/etc/postfix/sasl/sasl_passwd"
+      mode: 0600
+    - path: "/etc/postfix/sasl/sasl_passwd.db"
+      mode: 0600
+  register: configuration_files
+  tags:
+    - config
+    - mail-notifications

@@ -7,3 +7,7 @@
     mode: '0644'
     owner: "{{ docker.user }}"
     group: "{{ docker.user }}"
+  tags:
+    - multiapp
+    - config
+    - qbittorrent

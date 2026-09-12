@@ -4,6 +4,7 @@
   remote_user: root
 
   roles:
+    - mail-notifications
     - docker_engine_install
     - gandi_ddns
     - multiapp

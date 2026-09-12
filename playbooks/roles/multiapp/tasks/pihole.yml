@@ -7,6 +7,10 @@
     mode: '0755'
     owner: "{{ docker.user }}"
     group: "{{ docker.user }}"
+  tags:
+    - multiapp
+    - volume
+    - folder
 
 - name: Template pihole compose file
   ansible.builtin.template:
@@ -15,6 +19,10 @@
     mode: '0644'
     owner: "{{ docker.user }}"
     group: "{{ docker.user }}"
+  tags:
+    - multiapp
+    - config
+    - pihole
 
 - name: Template traefik's routing configuration for pihole container
   ansible.builtin.template:
@@ -23,3 +31,7 @@
     mode: '0644'
     owner: "{{ docker.user }}"
     group: "{{ docker.user }}"
+  tags:
+    - multiapp
+    - config
+    - pihole

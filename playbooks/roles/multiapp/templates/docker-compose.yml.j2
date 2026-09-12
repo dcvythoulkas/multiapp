@@ -21,6 +21,7 @@ services:
   webproxy:
     image: traefik:v{{ docker.applications.traefik.version }}
     container_name: webproxy
+    restart: unless-stopped
     security_opt:
       - no-new-privileges:true
     volumes:
