@@ -1,0 +1,34 @@
+---
+
+- name: Install smartmontools
+  ansible.builtin.apt:
+    pkg:
+      - smartmontools
+    state: latest
+    update_cache: yes
+    cache_valid_time: 7200
+  tags:
+    - smart_mon
+    - packages
+
+- name: Set block device list
+  ansible.builtin.set_fact:
+    disk_list: "{{ disk_list | default([]) + [item.key | string] }}"
+  when: item.key is match('^(sd|nvme|vd|xvd)')
+  loop: "{{ ansible_facts['devices'] | dict2items }}"
+  tags:
+    - smart_mon
+    - packages
+
+- name: Template SMART configuration file
+  ansible.builtin.template:
+    src: smartd.conf.j2
+    dest: /etc/smartd.conf
+    mode: 0644
+    owner: root
+    group: root
+  notify:
+    - Restart smartmontools
+  tags:
+    - smart_mon
+    - config

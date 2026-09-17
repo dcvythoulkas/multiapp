@@ -1,0 +1,11 @@
+---
+- name: Gather facts to get info
+  hosts: "{{ target }}"
+  remote_user: root
+
+  tasks:
+    - name: Get devices
+      ansible.builtin.debug:
+        msg: "{{ item.key }}"
+      when: item.key is match('^(sd|nvme|vd|xvd)')
+      loop: "{{ ansible_facts['devices'] | dict2items }}"

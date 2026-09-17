@@ -1,0 +1,8 @@
+---
+- name: Configure jfs
+  hosts: jfs
+  remote_user: root
+
+  roles:
+    - mail-notifications
+    - smart_mon
