@@ -41,18 +41,9 @@
     - src: sasl_passwd.j2
       dest: "/etc/postfix/sasl/sasl_passwd"
       mode: 0600
-  register: configuration_files
   notify:
     - Restart postfix
-  tags:
-    - config
-    - mail-notifications
-
-- name: Run postmap if configuration changed
-  ansible.builtin.command: /usr/sbin/postmap {{ item }}
-  loop:
-    - "/etc/postfix/sasl/sasl_passwd"
-  when: configuration_files.changed
+    - Update sasl pass database
   tags:
     - config
     - mail-notifications
@@ -67,6 +58,16 @@
     - path: "/etc/postfix/sasl/sasl_passwd.db"
       mode: 0600
   register: configuration_files
+  tags:
+    - config
+    - mail-notifications
+
+- name: Add alias to forward root messages
+  ansible.builtin.lineinfile:
+    path: /etc/aliases
+    line: "root: {{ email_address }}"
+  notify:
+    - Update alias database
   tags:
     - config
     - mail-notifications

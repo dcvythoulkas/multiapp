@@ -3,3 +3,9 @@
   ansible.builtin.service:
     name: postfix
     state: restarted
+
+- name: Update alias database
+  ansible.builtin.command: /usr/bin/newaliases
+
+- name: Update sasl pass database
+  ansible.builtin.command: /usr/sbin/postmap /etc/postfix/sasl/sasl_passwd
