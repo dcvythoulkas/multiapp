@@ -4,9 +4,9 @@
 # gandi token
 GANDIV5_PERSONAL_ACCESS_TOKEN: {{ gandi_pat }}
 
-#######################################################################
-#######################################################################
 
+{% if docker.applications.nextcloud is defined %}
+#######################################################################
 ## Nextcloud vars ##
 {% if docker.applications.nextcloud.database == 'postgresql' %}
 # Database vars - PostgreSQL
@@ -36,13 +36,13 @@ smtp_username: "{{ docker.applications.nextcloud.env.smtp_username }}"
 smtp_password: "{{ docker.applications.nextcloud.env.smtp_password }}"
 smtp_from_address: "{{ docker.applications.nextcloud.env.smtp_from_address }}"
 smtp_from_domain: "gmail.com"
-
 #######################################################################
-#######################################################################
+{% endif %}
 
+{% if docker.applications.pihole is defined %}
+#######################################################################
 ## pihole vars
 local_ip: {{docker.applications.pihole.local_ip }}
 ftl_conf_webserver_api_password: {{ docker.applications.pihole.password }}
-
 #######################################################################
-#######################################################################
+{% endif %}
