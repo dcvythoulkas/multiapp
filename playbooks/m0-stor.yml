@@ -1,0 +1,11 @@
+---
+- name: Configure m0-stor
+  hosts: m0-stor
+  remote_user: root
+
+  roles:
+    - mail-notifications
+    - smart_mon
+#    - docker_engine_install
+#    - gandi_ddns
+#    - multiapp
