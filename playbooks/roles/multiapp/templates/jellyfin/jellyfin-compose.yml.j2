@@ -1,10 +1,10 @@
 ---
 services:
   stream-server:
-    image: jellyfin/jellyfin:10.11
+    image: jellyfin/jellyfin:{{ docker.applications.jellyfin.version }}
     container_name: jellyfin
     restart: 'unless-stopped'
-    user: 1000:1000
+    user: {{ docker.uid }}:{{ docker.gid }}
     networks:
       webproxy-backend:
         ipv4_address: "10.254.0.11"

@@ -1,0 +1,10 @@
+---
+- name: Configure rook
+  hosts: rook
+  remote_user: giskard
+  become: yes
+
+  roles:
+    - basic_conf
+    - mail-notifications
+    - smart_mon

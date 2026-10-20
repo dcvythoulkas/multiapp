@@ -4,5 +4,9 @@
   remote_user: root
 
   roles:
+    - basic_conf
     - mail-notifications
     - smart_mon
+    - docker_engine_install
+    - gandi_ddns
+    - multiapp

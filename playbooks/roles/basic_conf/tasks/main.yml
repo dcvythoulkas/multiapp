@@ -1,0 +1,53 @@
+---
+- name: Configure alternatives
+  community.general.alternatives:
+    name: editor
+    path: /usr/bin/vim.basic
+  tags:
+    - basic_conf
+    - editor
+
+- name: Check the existance of Tailscale service
+  ansible.builtin.stat:
+    path: /usr/lib/systemd/system/tailscaled.service
+  register: tailscaled
+  tags:
+    - basic_conf
+    - tailscale
+
+- name: Create directory for Tailscale service override
+  ansible.builtin.file:
+    path: /etc/systemd/system/tailscaled.service.d/
+    state: directory
+    mode: 0755
+  when: tailscaled.stat.exists
+  tags:
+    - basic_conf
+    - tailscale
+
+- name: Add override.conf to set Tailscale MTU
+  ansible.builtin.copy:
+    src: tailscaled_override.conf
+    dest: /etc/systemd/system/tailscaled.service.d/override.conf
+    mode: 0644
+#  register: tailscaled_override
+  when: tailscaled.stat.exists
+  notify:
+    - Restart Tailscale service
+  tags:
+    - basic_conf
+    - tailscale
+#
+#- name: Print
+#  debug:
+#    var: tailscaled_override
+#  tags:
+#    - basic_conf
+#
+#- name: Restart Tailscale service
+#  ansible.builtin.systemd_service:
+#    name: tailscaled.service
+#    state: restarted
+#    daemon_reload: yes
+#  when:
+#    - tailscaled.stat.exists
