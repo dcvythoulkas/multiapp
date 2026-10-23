@@ -31,7 +31,7 @@
 - name: Make sure acme.json has correct permissions from the beginning
   ansible.builtin.file:
     path: "{{ docker.root_path }}/traefik/install/acme.json"
-    state: touch
+    state: file
     mode: '0600'
     owner: "{{ docker.user }}"
     group: "{{ docker.user }}"
@@ -76,3 +76,11 @@
 - name: Add pihole
   import_tasks: pihole.yml
   when: docker.applications.pihole is defined
+
+- name: Add Sonarr
+  import_tasks: sonarr.yml
+  when: docker.applications.sonarr is defined
+
+- name: Add Radarr
+  import_tasks: radarr.yml
+  when: docker.applications.radarr is defined
