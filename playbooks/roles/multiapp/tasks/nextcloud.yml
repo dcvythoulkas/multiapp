@@ -10,7 +10,7 @@
   tags:
     - multiapp
     - volumes
-    - folder
+    - nextcloud
 
 - name: Template Nextcloud compose file
   ansible.builtin.template:

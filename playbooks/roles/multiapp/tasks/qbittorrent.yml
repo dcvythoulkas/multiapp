@@ -1,5 +1,31 @@
 ---
 
+- name: Create directory for qBittorrent conf
+  ansible.builtin.file:
+    path: "{{ docker.root_path }}/qbittorrent/appdata"
+    state: directory
+    mode: '0755'
+    owner: "{{ docker.user }}"
+    group: "{{ docker.user }}"
+  when: docker.applications.qbittorrent.version is defined
+  tags:
+    - multiapp
+    - volumes
+    - qbittorrent
+
+- name: Template qBittorrent compose file
+  ansible.builtin.template:
+    src: "qbittorrent/qbittorrent-compose.yml.j2"
+    dest: "{{ docker.root_path }}/qbittorrent/qbittorrent-compose.yml"
+    mode: '0644'
+    owner: "{{ docker.user }}"
+    group: "{{ docker.user }}"
+  when: docker.applications.qbittorrent.version is defined
+  tags:
+    - multiapp
+    - config
+    - qbittorrent
+
 - name: Template traefik's routing configuration for qbittorent application
   ansible.builtin.template:
     src: "traefik/routing/qbittorrent-routes.yml.j2"
