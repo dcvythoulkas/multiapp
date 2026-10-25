@@ -1,0 +1,15 @@
+http:
+  routers:
+    flaresolverr:
+      entryPoints:
+        - websecure-int
+      rule: "Host(`{{ docker.applications.flaresolverr.gandi_host ~ '.' ~ gandi_domain }}`)"
+      tls:
+        certResolver: {{ docker.applications.flaresolverr.acme_certs }}
+      service: flaresolverr-service
+
+  services:
+    flaresolverr-service:
+      loadbalancer:
+        servers:
+          - url: "{{ docker.applications.flaresolverr.backend_url }}"

@@ -1,7 +1,7 @@
 ---
 services:
   torrent-indexer:
-    image: lscr.io/linuxserver/prowlarr:latest
+    image: lscr.io/linuxserver/prowlarr:{{ docker.applications.prowlarr.version }}
     container_name: prowlarr
     restart: unless-stopped
     environment:

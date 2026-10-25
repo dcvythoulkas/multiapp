@@ -1,7 +1,7 @@
 ---
 services:
   movie-library:
-    image: lscr.io/linuxserver/radarr:latest
+    image: lscr.io/linuxserver/radarr:{{ docker.applications.radarr.version }}
     container_name: radarr
     restart: unless-stopped
     environment:

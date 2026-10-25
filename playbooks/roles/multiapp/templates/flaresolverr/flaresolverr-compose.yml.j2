@@ -1,0 +1,20 @@
+---
+services:
+  cloudflare-resolver:
+    image: flaresolverr/flaresolverr:{{ docker.applications.flaresolverr.version }}
+    container_name: flaresolverr
+    restart: unless-stopped
+    environment:
+      - PUID={{ docker.uid }}
+      - PGID={{ docker.gid }}
+      - TZ=Europe/Athens
+      - LOG_LEVEL=info
+      - LOG_HTML=false
+      - CAPTCHA_SOLVER=none
+    networks:
+      webproxy-backend:
+        ipv4_address: "10.254.0.19"
+    tmpfs:
+      - /tmp:size=256M,mode=1777
+#    ports:
+#      - 8191:8191

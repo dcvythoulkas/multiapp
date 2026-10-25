@@ -1,0 +1,39 @@
+---
+
+- name: Create directory for flaresolverr conf
+  ansible.builtin.file:
+    path: "{{ docker.root_path }}/flaresolverr"
+    state: directory
+    mode: '0755'
+    owner: "{{ docker.user }}"
+    group: "{{ docker.user }}"
+  when: docker.applications.flaresolverr.version is defined
+  tags:
+    - multiapp
+    - volumes
+    - flaresolverr
+
+- name: Template flaresolverr compose file
+  ansible.builtin.template:
+    src: "flaresolverr/flaresolverr-compose.yml.j2"
+    dest: "{{ docker.root_path }}/flaresolverr/flaresolverr-compose.yml"
+    mode: '0644'
+    owner: "{{ docker.user }}"
+    group: "{{ docker.user }}"
+  when: docker.applications.flaresolverr.version is defined
+  tags:
+    - multiapp
+    - config
+    - flaresolverr
+
+- name: Template traefik's routing configuration for flaresolverr application
+  ansible.builtin.template:
+    src: "traefik/routing/flaresolverr-routes.yml.j2"
+    dest: "{{ docker.root_path }}/traefik/routing/flaresolverr-routes.yml"
+    mode: '0644'
+    owner: "{{ docker.user }}"
+    group: "{{ docker.user }}"
+  tags:
+    - multiapp
+    - config
+    - flaresolverr

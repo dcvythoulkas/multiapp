@@ -77,6 +77,10 @@
   import_tasks: pihole.yml
   when: docker.applications.pihole is defined
 
+- name: Add FlaseSolverr
+  import_tasks: flaresolverr.yml
+  when: docker.applications.flaresolverr is defined
+
 - name: Add Prowlarr
   import_tasks: prowlarr.yml
   when: docker.applications.prowlarr is defined

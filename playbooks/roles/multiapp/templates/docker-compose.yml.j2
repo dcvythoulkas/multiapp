@@ -9,6 +9,8 @@ include:
 
 {% if docker.applications.prowlarr.version is defined %}  - ./prowlarr/prowlarr-compose.yml{% endif %}
 
+{% if docker.applications.flaresolverr.version is defined %}  - ./flaresolverr/flaresolverr-compose.yml{% endif %}
+
 {% if docker.applications.radarr.version is defined %}  - ./radarr/radarr-compose.yml{% endif %}
 
 {% if docker.applications.vaultwarden.version is defined %}  - ./vaultwarden/vaultwarden-compose.yml{% endif %}
