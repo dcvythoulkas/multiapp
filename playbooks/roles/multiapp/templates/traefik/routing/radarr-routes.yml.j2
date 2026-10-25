@@ -1,0 +1,15 @@
+http:
+  routers:
+    radarr:
+      entryPoints:
+        - websecure-int
+      rule: "Host(`{{ docker.applications.radarr.gandi_host ~ '.' ~ gandi_domain }}`)"
+      tls:
+        certResolver: {{ docker.applications.radarr.acme_certs }}
+      service: radarr-service
+
+  services:
+    radarr-service:
+      loadbalancer:
+        servers:
+          - url: "{{ docker.applications.radarr.backend_url }}"

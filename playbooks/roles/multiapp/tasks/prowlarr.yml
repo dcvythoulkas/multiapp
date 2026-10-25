@@ -1,0 +1,39 @@
+---
+
+- name: Create directory for prowlarr conf
+  ansible.builtin.file:
+    path: "{{ docker.root_path }}/prowlarr/appdata"
+    state: directory
+    mode: '0755'
+    owner: "{{ docker.user }}"
+    group: "{{ docker.user }}"
+  when: docker.applications.prowlarr.version is defined
+  tags:
+    - multiapp
+    - volumes
+    - prowlarr
+
+- name: Template prowlarr compose file
+  ansible.builtin.template:
+    src: "prowlarr/prowlarr-compose.yml.j2"
+    dest: "{{ docker.root_path }}/prowlarr/prowlarr-compose.yml"
+    mode: '0644'
+    owner: "{{ docker.user }}"
+    group: "{{ docker.user }}"
+  when: docker.applications.prowlarr.version is defined
+  tags:
+    - multiapp
+    - config
+    - prowlarr
+
+- name: Template traefik's routing configuration for prowlarr application
+  ansible.builtin.template:
+    src: "traefik/routing/prowlarr-routes.yml.j2"
+    dest: "{{ docker.root_path }}/traefik/routing/prowlarr-routes.yml"
+    mode: '0644'
+    owner: "{{ docker.user }}"
+    group: "{{ docker.user }}"
+  tags:
+    - multiapp
+    - config
+    - prowlarr

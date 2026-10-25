@@ -1,0 +1,17 @@
+---
+services:
+  torrent-indexer:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    restart: unless-stopped
+    environment:
+      - PUID={{ docker.uid }}
+      - PGID={{ docker.gid }}
+      - TZ=Europe/Athens
+    networks:
+      webproxy-backend:
+        ipv4_address: "10.254.0.18"
+    volumes:
+      - ./appdata:/config
+#    ports:
+#      - 9696:9696

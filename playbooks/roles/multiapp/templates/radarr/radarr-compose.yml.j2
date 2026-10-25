@@ -1,0 +1,18 @@
+---
+services:
+  movie-library:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    restart: unless-stopped
+    environment:
+      - PUID={{ docker.uid }}
+      - PGID={{ docker.gid }}
+      - TZ=Europe/Athens
+    networks:
+      webproxy-backend:
+        ipv4_address: "10.254.0.16"
+    volumes:
+      - ./appdata:/config
+      - ../streaming-media:/streaming-media
+#    ports:
+#      - 7878:7878

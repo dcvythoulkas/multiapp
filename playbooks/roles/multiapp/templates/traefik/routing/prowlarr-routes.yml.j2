@@ -1,0 +1,15 @@
+http:
+  routers:
+    prowlarr:
+      entryPoints:
+        - websecure-int
+      rule: "Host(`{{ docker.applications.prowlarr.gandi_host ~ '.' ~ gandi_domain }}`)"
+      tls:
+        certResolver: {{ docker.applications.prowlarr.acme_certs }}
+      service: prowlarr-service
+
+  services:
+    prowlarr-service:
+      loadbalancer:
+        servers:
+          - url: "{{ docker.applications.prowlarr.backend_url }}"

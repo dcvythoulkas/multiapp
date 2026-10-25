@@ -1,1 +1,39 @@
 ---
+
+- name: Create directory for radarr conf
+  ansible.builtin.file:
+    path: "{{ docker.root_path }}/radarr/appdata"
+    state: directory
+    mode: '0755'
+    owner: "{{ docker.user }}"
+    group: "{{ docker.user }}"
+  when: docker.applications.radarr.version is defined
+  tags:
+    - multiapp
+    - volumes
+    - radarr
+
+- name: Template radarr compose file
+  ansible.builtin.template:
+    src: "radarr/radarr-compose.yml.j2"
+    dest: "{{ docker.root_path }}/radarr/radarr-compose.yml"
+    mode: '0644'
+    owner: "{{ docker.user }}"
+    group: "{{ docker.user }}"
+  when: docker.applications.radarr.version is defined
+  tags:
+    - multiapp
+    - config
+    - radarr
+
+- name: Template traefik's routing configuration for radarr application
+  ansible.builtin.template:
+    src: "traefik/routing/radarr-routes.yml.j2"
+    dest: "{{ docker.root_path }}/traefik/routing/radarr-routes.yml"
+    mode: '0644'
+    owner: "{{ docker.user }}"
+    group: "{{ docker.user }}"
+  tags:
+    - multiapp
+    - config
+    - radarr

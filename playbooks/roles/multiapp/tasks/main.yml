@@ -77,6 +77,10 @@
   import_tasks: pihole.yml
   when: docker.applications.pihole is defined
 
+- name: Add Prowlarr
+  import_tasks: prowlarr.yml
+  when: docker.applications.prowlarr is defined
+
 - name: Add Sonarr
   import_tasks: sonarr.yml
   when: docker.applications.sonarr is defined
