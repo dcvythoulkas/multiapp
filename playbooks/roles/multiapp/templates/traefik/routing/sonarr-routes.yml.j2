@@ -1,0 +1,15 @@
+http:
+  routers:
+    sonarr:
+      entryPoints:
+        - websecure-int
+      rule: "Host(`{{ docker.applications.sonarr.gandi_host ~ '.' ~ gandi_domain }}`)"
+      tls:
+        certResolver: {{ docker.applications.sonarr.acme_certs }}
+      service: sonarr-service
+
+  services:
+    sonarr-service:
+      loadbalancer:
+        servers:
+          - url: "{{ docker.applications.sonarr.backend_url }}"

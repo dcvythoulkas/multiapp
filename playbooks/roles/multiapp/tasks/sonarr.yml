@@ -1,1 +1,39 @@
 ---
+
+- name: Create directory for sonarr conf
+  ansible.builtin.file:
+    path: "{{ docker.root_path }}/sonarr/appdata"
+    state: directory
+    mode: '0755'
+    owner: "{{ docker.user }}"
+    group: "{{ docker.user }}"
+  when: docker.applications.sonarr.version is defined
+  tags:
+    - multiapp
+    - volumes
+    - sonarr
+
+- name: Template sonarr compose file
+  ansible.builtin.template:
+    src: "sonarr/sonarr-compose.yml.j2"
+    dest: "{{ docker.root_path }}/sonarr/sonarr-compose.yml"
+    mode: '0644'
+    owner: "{{ docker.user }}"
+    group: "{{ docker.user }}"
+  when: docker.applications.sonarr.version is defined
+  tags:
+    - multiapp
+    - config
+    - sonarr
+
+- name: Template traefik's routing configuration for sonarr application
+  ansible.builtin.template:
+    src: "traefik/routing/sonarr-routes.yml.j2"
+    dest: "{{ docker.root_path }}/traefik/routing/sonarr-routes.yml"
+    mode: '0644'
+    owner: "{{ docker.user }}"
+    group: "{{ docker.user }}"
+  tags:
+    - multiapp
+    - config
+    - sonarr

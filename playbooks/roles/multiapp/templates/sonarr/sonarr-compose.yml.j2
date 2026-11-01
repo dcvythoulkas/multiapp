@@ -1,0 +1,18 @@
+---
+services:
+  series-library:
+    image: lscr.io/linuxserver/sonarr:{{ docker.applications.sonarr.version }}
+    container_name: sonarr
+    restart: unless-stopped
+    environment:
+      - PUID={{ docker.uid }}
+      - PGID={{ docker.gid }}
+      - TZ=Europe/Athens
+    networks:
+      webproxy-backend:
+        ipv4_address: "10.254.0.17"
+    volumes:
+      - ./appdata:/config
+      - ../streaming-media:/streaming-media
+#    ports:
+#      - 8989:8989
